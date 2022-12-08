@@ -7,64 +7,12 @@ datasource db {
   url      = env("MONGODB_URI")
 }
 
-type OrganizationsInitiatives {
-  defaultAsset String
-  description  String
-  end          DateTime                        @db.Date
-  start        DateTime                        @db.Date
-  tag          Int
-  tiers        OrganizationsInitiativesTiers[]
-  title        String
-}
-
-type OrganizationsInitiativesTiers {
-  amount      OrganizationsInitiativesTiersAmount
-  asset       String
-  description String
-  title       String
-}
-
-type OrganizationsInitiativesTiersAmount {
-  currency String
-  issuer   String
-  value    Int
-}
-
-model accounts {
-  id                String @id @default(auto()) @map("_id") @db.ObjectId
-  access_token      String
-  provider          String
-  providerAccountId String
-  scope             String
-  token_type        String
-  type              String
-  userId            String @db.ObjectId
-}
-
 model categories {
   id            String          @id @default(auto()) @map("_id") @db.ObjectId
   color         String
   description   String
-  organizations organizations[]
   slug          String          @unique
   title         String
-}
-
-model nft_data {
-  id             String   @id @default(auto()) @map("_id") @db.ObjectId
-  created        DateTime @db.Date @default(now())
-  donorAddress   String
-  organizationId String
-  metadataUri    String
-  imageUri       String
-  coinNetwork    String
-  coinLabel      String
-  coinSymbol     String
-  coinValue      String
-  usdValue       String
-  tokenId        String
-  offerId        String
-  status         Int      @default(0)
 }
 
 model organizations {
@@ -73,21 +21,14 @@ model organizations {
   country        String
   description    String
   image          String
-  initiatives    OrganizationsInitiatives[]
-  wallets        wallets[]
   mailingAddress String
   name           String
   phone          String
   url            String
-  category       categories?                @relation(fields: [categoryId], references: [id])
-  categoryId     String                     @db.ObjectId
   artworks       artworks[]
   offers         offers[]
 }
 
-model rewards {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-}
 
 model sessions {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
@@ -113,20 +54,6 @@ model users {
   buyers        offers[]      @relation("buyer")
   inactive      Boolean
 }
-
-enum Chain {
-  XRPL
-}
-
-model wallets {
-  id             String         @id @default(auto()) @map("_id") @db.ObjectId
-  address        String
-  chain          Chain
-  organizations  organizations? @relation(fields: [organizationId], references: [id])
-  organizationId String         @db.ObjectId
-}
-
-// ENLIGHTENMINT
 
 model collections {
   id          String     @id @default(auto()) @map("_id") @db.ObjectId

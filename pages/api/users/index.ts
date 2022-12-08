@@ -5,8 +5,6 @@ import checkApiKey from "/lib/checkApiKey";
 // List of users
 export default async function handler(req, res) {
   const { method, headers } = req;
-  const prisma = new PrismaClient();
-  await prisma.$connect();
 
   console.log('USERS')
   switch (method) {
@@ -17,8 +15,10 @@ export default async function handler(req, res) {
           console.log('ERROR: not authorized');
           return res.status(403).json({ success: false, error:'Not authorized' });
         }
+        const prisma = new PrismaClient();
+        await prisma.$connect();
         const data = await prisma.users.findMany();
-        console.log('USERS2')
+        await prisma.$disconnect();
         res.status(200).json({ success: true, data: data });
       } catch (error) {
         console.error('ERROR:', error)
@@ -32,7 +32,10 @@ export default async function handler(req, res) {
           return res.status(403).json({ success: false, error: 'Not authorized' })
         }
         let data = req.body
+        const prisma = new PrismaClient();
+        await prisma.$connect();
         let result = await prisma.users.create({data: data})
+        await prisma.$disconnect();
         return res.status(201).json({ success: true, data: result })
       } catch (error) {
         console.error('REGISTRY ERROR', { error })
@@ -40,7 +43,6 @@ export default async function handler(req, res) {
       }
       break
     default:
-      console.log('USERS4')
       res.status(400).json({ success: false, error:'HTTP method not supported' });
       break;
   }

@@ -3,17 +3,17 @@
   "version": "1.0",
   "private": true,
   "scripts": {
-    "dev":   "next dev",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint":  "next lint",
+    "lint": "next lint",
     "prisma": "prisma generate"
   },
   "dependencies": {
     "@next-auth/mongodb-adapter": "^1.1.1",
     "@prisma/client": "^4.5.0",
     "install": "^0.13.0",
-    "mongodb": "^4.10.0",
+    "mongodb": "^4.12.1",
     "next": "12.3.1",
     "next-auth": "^4.13.0",
     "next-swagger-doc": "^0.3.6",

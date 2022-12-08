@@ -14,16 +14,8 @@ export default function Home() {
 
       <main className={styles.main}>
         <LoginButton />
-        <button
-          onClick={() => {
-            fetch('api/users/api_key', { method: 'PUT' });
-          }}
-        >
-          Generate API Key
-        </button>
-        <button onClick={() => fetch('api/organizations').then(console.log)}>
-          Get orgs
-        </button>
+        <button onClick={() => { fetch('api/users/api_key', { method: 'PUT' }); }} >Generate API Key</button>
+        <button onClick={() => fetch('api/organizations').then(console.log)}>Get orgs</button>
       </main>
 
       <footer className={styles.footer}>

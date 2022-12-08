@@ -1,32 +1,28 @@
+// api/organizations.js
 import { PrismaClient } from "@prisma/client"
-import { unstable_getServerSession } from "next-auth"
 // @ts-ignore
 import checkApiKey from "/lib/checkApiKey"
-import { authOptions } from "../auth/[...nextauth]"
-
 
 export default async function handler(req, res) {
-  const { method, query } = req
-  const prisma = new PrismaClient()
-  await prisma.$connect()
-  // @ts-ignore
-  // const session = await unstable_getServerSession(req, res, authOptions)
+  const { method } = req
+  const { organizationId } = req.query
 
   switch (method) {
-    // GET /api/nft/[id]
-    // gets unique nft by id
     case "GET":
       try {
         const authorized = await checkApiKey(req.headers['x-api-key'])
+        console.log(req.headers['x-api-key'], { authorized })
         if (!authorized) {
           return res.status(403).json({ success: false })
         }
-        const nft = await prisma.nft_data.findUnique({
-          where: { id: query.id }
+        const prisma = new PrismaClient()
+        await prisma.$connect()
+        const organization = await prisma.organizations.findUnique({
+          where: { id: organizationId }
         })
-        res.status(200).json({ success: true, data: nft })
+        await prisma.$disconnect()
+        res.status(200).json({ success: true, data: organization })
       } catch (error) {
-        console.log({ error })
         res.status(400).json({ success: false })
       }
       break

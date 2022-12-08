@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client"
 // @ts-ignore
-import checkApiKey from "/lib/checkApiKey.ts"
+import checkApiKey from "/lib/checkApiKey"
 
 export default async function handler(req, res) {
   const { method, query } = req
