@@ -7,16 +7,8 @@ datasource db {
   url      = env("MONGODB_URI")
 }
 
-model categories {
-  id            String          @id @default(auto()) @map("_id") @db.ObjectId
-  color         String
-  description   String
-  slug          String          @unique
-  title         String
-}
-
 model organizations {
-  id             String                     @id @default(auto()) @map("_id") @db.ObjectId
+  id             String     @id @default(auto()) @map("_id") @db.ObjectId
   EIN            String
   country        String
   description    String
@@ -29,14 +21,6 @@ model organizations {
   offers         offers[]
 }
 
-
-model sessions {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  expires      DateTime @db.Date
-  sessionToken String
-  userId       String   @db.ObjectId
-}
-
 model users {
   id            String        @id @default(auto()) @map("_id") @db.ObjectId
   api_key       String        @unique
@@ -46,7 +30,7 @@ model users {
   name          String
   description   String
   wallet        String
-  type          Int      // 0.user 1.organization 2.partner 3.other?
+  type          Int // 0.user 1.organization 2.partner 3.other?
   created       DateTime      @default(now()) @db.Date
   artworks      artworks[]
   collections   collections[]
@@ -85,11 +69,11 @@ model artworks {
   artwork       String // ipfs image
   metadata      String // ipfs metadata
   media         String // image audio video model text pdf html
-  royalties     Int    // percentage for the organization
+  royalties     Int // percentage for the organization
   beneficiary   organizations @relation(fields: [beneficiaryId], references: [id])
   beneficiaryId String        @db.ObjectId
   forsale       Boolean
-  copies        Int    // 0 for unlimited
+  copies        Int // 0 for unlimited
   sold          Int
   price         Int
   tags          String
@@ -103,7 +87,7 @@ model artworks {
 model offers {
   id            String         @id @default(auto()) @map("_id") @db.ObjectId
   created       DateTime       @default(now()) @db.Date
-  type          Int      // 0.sell 1.buy
+  type          Int // 0.sell 1.buy
   seller        users          @relation("seller", fields: [sellerId], references: [id])
   sellerId      String         @db.ObjectId
   collection    collections    @relation(fields: [collectionId], references: [id])
@@ -117,7 +101,7 @@ model offers {
   buyerId       String?        @db.ObjectId
   beneficiary   organizations? @relation(fields: [beneficiaryId], references: [id])
   beneficiaryId String?        @db.ObjectId
-  wallet        String   // organization wallet
+  wallet        String // organization wallet
   offerId       String
-  status        Int      // 0.created 1.accepted 2.declined
+  status        Int // 0.created 1.accepted 2.declined
 }
