@@ -3,7 +3,6 @@ import { PrismaClient } from "@prisma/client"
 import checkApiKey from "/lib/checkApiKey"
 
 // GET /api/artworks/[id]
-// get artwork by id
 export default async function handler(req, res) {
   let { method, headers, query } = req
   console.log('- ARTWORK BY ID', query.id)
