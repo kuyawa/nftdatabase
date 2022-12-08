@@ -1,0 +1,196 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGODB_URI")
+}
+
+type OrganizationsInitiatives {
+  defaultAsset String
+  description  String
+  end          DateTime                        @db.Date
+  start        DateTime                        @db.Date
+  tag          Int
+  tiers        OrganizationsInitiativesTiers[]
+  title        String
+}
+
+type OrganizationsInitiativesTiers {
+  amount      OrganizationsInitiativesTiersAmount
+  asset       String
+  description String
+  title       String
+}
+
+type OrganizationsInitiativesTiersAmount {
+  currency String
+  issuer   String
+  value    Int
+}
+
+model accounts {
+  id                String @id @default(auto()) @map("_id") @db.ObjectId
+  access_token      String
+  provider          String
+  providerAccountId String
+  scope             String
+  token_type        String
+  type              String
+  userId            String @db.ObjectId
+}
+
+model categories {
+  id            String          @id @default(auto()) @map("_id") @db.ObjectId
+  color         String
+  description   String
+  organizations organizations[]
+  slug          String          @unique
+  title         String
+}
+
+model nft_data {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  created        DateTime @db.Date @default(now())
+  donorAddress   String
+  organizationId String
+  metadataUri    String
+  imageUri       String
+  coinNetwork    String
+  coinLabel      String
+  coinSymbol     String
+  coinValue      String
+  usdValue       String
+  tokenId        String
+  offerId        String
+  status         Int      @default(0)
+}
+
+model organizations {
+  id             String                     @id @default(auto()) @map("_id") @db.ObjectId
+  EIN            String
+  country        String
+  description    String
+  image          String
+  initiatives    OrganizationsInitiatives[]
+  wallets        wallets[]
+  mailingAddress String
+  name           String
+  phone          String
+  url            String
+  category       categories?                @relation(fields: [categoryId], references: [id])
+  categoryId     String                     @db.ObjectId
+  artworks       artworks[]
+  offers         offers[]
+}
+
+model rewards {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+}
+
+model sessions {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  expires      DateTime @db.Date
+  sessionToken String
+  userId       String   @db.ObjectId
+}
+
+model users {
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  api_key       String        @unique
+  email         String
+  emailVerified Boolean?
+  image         String
+  name          String
+  description   String
+  wallet        String
+  type          Int      // 0.user 1.organization 2.partner 3.other?
+  created       DateTime      @default(now()) @db.Date
+  artworks      artworks[]
+  collections   collections[]
+  offers        offers[]      @relation("seller")
+  buyers        offers[]      @relation("buyer")
+  inactive      Boolean
+}
+
+enum Chain {
+  XRPL
+}
+
+model wallets {
+  id             String         @id @default(auto()) @map("_id") @db.ObjectId
+  address        String
+  chain          Chain
+  organizations  organizations? @relation(fields: [organizationId], references: [id])
+  organizationId String         @db.ObjectId
+}
+
+// ENLIGHTENMINT
+
+model collections {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  created     DateTime   @default(now()) @db.Date
+  name        String
+  description String
+  author      users      @relation(fields: [authorId], references: [id])
+  authorId    String     @db.ObjectId
+  image       String
+  taxon       String // NFT taxon identifier
+  nftcount    Int
+  curated     Boolean
+  inactive    Boolean
+  artworks    artworks[]
+  offers      offers[]
+}
+
+model artworks {
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  created       DateTime      @default(now()) @db.Date
+  tokenId       String
+  author        users         @relation(fields: [authorId], references: [id])
+  authorId      String        @db.ObjectId
+  collection    collections   @relation(fields: [collectionId], references: [id])
+  collectionId  String        @db.ObjectId
+  name          String
+  description   String
+  image         String // aws image for display
+  artwork       String // ipfs image
+  metadata      String // ipfs metadata
+  media         String // image audio video model text pdf html
+  royalties     Int    // percentage for the organization
+  beneficiary   organizations @relation(fields: [beneficiaryId], references: [id])
+  beneficiaryId String        @db.ObjectId
+  forsale       Boolean
+  copies        Int    // 0 for unlimited
+  sold          Int
+  price         Int
+  tags          String
+  likes         Int
+  views         Int
+  category      String
+  inactive      Boolean
+  offers        offers[]
+}
+
+model offers {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  created       DateTime       @default(now()) @db.Date
+  type          Int      // 0.sell 1.buy
+  seller        users          @relation("seller", fields: [sellerId], references: [id])
+  sellerId      String         @db.ObjectId
+  collection    collections    @relation(fields: [collectionId], references: [id])
+  collectionId  String         @db.ObjectId
+  artwork       artworks       @relation(fields: [artworkId], references: [id])
+  artworkId     String         @db.ObjectId
+  tokenId       String
+  price         Int
+  royalties     Int
+  buyer         users?         @relation("buyer", fields: [buyerId], references: [id])
+  buyerId       String?        @db.ObjectId
+  beneficiary   organizations? @relation(fields: [beneficiaryId], references: [id])
+  beneficiaryId String?        @db.ObjectId
+  wallet        String   // organization wallet
+  offerId       String
+  status        Int      // 0.created 1.accepted 2.declined
+}
