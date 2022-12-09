@@ -29,12 +29,10 @@ export default async function handler(req, res) {
         if (!authorized) {
           return res.status(403).json({ success: false })
         }
-        const { wallets, initiatives, ...organization } = req.body
+        const data = req.body
         const prisma = new PrismaClient()
         await prisma.$connect()
-        const createdOrg = await prisma.organizations.create({
-          data: {...organization},
-        })
+        const createdOrg = await prisma.organizations.create({data: data})
         await prisma.$disconnect()
         res.status(201).json({ success: true, data: createdOrg })
       } catch (error) {

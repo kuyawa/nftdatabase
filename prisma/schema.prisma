@@ -17,6 +17,7 @@ model organizations {
   name           String
   phone          String
   url            String
+  wallet         String
   artworks       artworks[]
   offers         offers[]
 }
