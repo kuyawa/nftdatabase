@@ -16,7 +16,17 @@ export default async function handler(req, res) {
         }
         let prisma = new PrismaClient()
         await prisma.$connect()
-        let data = await prisma.offers.findMany({where: {sellerId: query.id}})
+        let data = await prisma.offers.findMany({
+          where: {
+            buyerId: query.id,
+            status: 1
+          },
+          include: {
+            artwork: {
+              include: { beneficiary: true }
+            }
+          }
+        })
         await prisma.$disconnect()
         //console.log('DATA:', data)
         console.log('DATA:', data?.length)

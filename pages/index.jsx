@@ -54,8 +54,7 @@ export default function Home() {
           <li className={styles.list}><button className={styles.button} onClick={getArtworks}>Get artworks</button></li>
           <li className={styles.list}><button className={styles.button} onClick={getOffers}>Get offers</button></li>
         </div>
-        <div className={styles.results} id="results">
-        </div>
+        <pre className={styles.results} id="results"></pre>
       </main>
 
       <footer className={styles.footer}>Powered by Vercel</footer>
