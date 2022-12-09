@@ -5,7 +5,7 @@ import checkApiKey from "/lib/checkApiKey"
 
 export default async function handler(req, res) {
   const { method } = req
-  const { organizationId } = req.query
+  const { id } = req.query
 
   switch (method) {
     case "GET":
@@ -18,7 +18,7 @@ export default async function handler(req, res) {
         const prisma = new PrismaClient()
         await prisma.$connect()
         const organization = await prisma.organizations.findUnique({
-          where: { id: organizationId }
+          where: { id: id }
         })
         await prisma.$disconnect()
         res.status(200).json({ success: true, data: organization })

@@ -15,8 +15,8 @@ export default async function handler(req, res) {
         if (!authorized) {
           return res.status(403).json({ success: false, error:'Not authorized' })
         }
-        let page = query?.page || 0
-        let size = query?.size || 100
+        let page = parseInt(query?.page || 0)
+        let size = parseInt(query?.size || 100)
         if(page<0){ page = 0 }
         if(size<0){ size = 100 }
         let start = page * size
