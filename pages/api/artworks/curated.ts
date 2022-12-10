@@ -32,7 +32,7 @@ export default async function handler(req, res) {
           },
           skip: start, 
           take: size, 
-          orderBy: {created: 'desc'} 
+          orderBy: {created: 'asc'} 
         })
         await prisma.$disconnect()
         console.log(data?.length||0, 'rows')
