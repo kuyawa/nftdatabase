@@ -35,7 +35,7 @@ export default async function handler(req, res) {
           orderBy: {created: 'asc'} 
         })
         await prisma.$disconnect()
-        console.log(data?.length||0, 'rows')
+        //console.log(data?.length||0, 'rows')
         res.status(200).json({ success: true, data: data })
       } catch (error) {
         console.log({ error })

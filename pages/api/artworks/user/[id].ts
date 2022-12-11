@@ -23,7 +23,7 @@ export default async function handler(req, res) {
         })
         await prisma.$disconnect()
         //console.log('DATA:', data)
-        console.log('DATA:', data?.length)
+        //console.log('DATA:', data?.length)
         res.status(200).json({ success: true, data: data })
       } catch (error) {
         console.log({ error })
