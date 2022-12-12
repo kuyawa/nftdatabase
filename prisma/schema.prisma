@@ -8,7 +8,7 @@ datasource db {
 }
 
 model organizations {
-  id             String     @id @default(auto()) @map("_id") @db.ObjectId
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
   EIN            String
   country        String
   description    String
@@ -31,7 +31,7 @@ model users {
   name          String
   description   String
   wallet        String
-  type          Int // 0.user 1.organization 2.partner 3.other?
+  type          Int           // 0.user 1.organization 2.partner 3.other?
   created       DateTime      @default(now()) @db.Date
   artworks      artworks[]
   collections   collections[]
@@ -41,14 +41,14 @@ model users {
 }
 
 model collections {
-  id          String     @id @default(auto()) @map("_id") @db.ObjectId
-  created     DateTime   @default(now()) @db.Date
+  id          String          @id @default(auto()) @map("_id") @db.ObjectId
+  created     DateTime        @default(now()) @db.Date
   name        String
   description String
-  author      users      @relation(fields: [authorId], references: [id])
-  authorId    String     @db.ObjectId
+  author      users           @relation(fields: [authorId], references: [id])
+  authorId    String          @db.ObjectId
   image       String
-  taxon       String // NFT taxon identifier
+  taxon       String          // NFT taxon identifier
   nftcount    Int
   curated     Boolean
   inactive    Boolean
@@ -66,15 +66,15 @@ model artworks {
   collectionId  String        @db.ObjectId
   name          String
   description   String
-  image         String // aws image for display
-  artwork       String // ipfs image
-  metadata      String // ipfs metadata
-  media         String // image audio video model text pdf html
-  royalties     Int // percentage for the organization
+  image         String        // aws image for display
+  artwork       String        // ipfs image
+  metadata      String        // ipfs metadata
+  media         String        // image audio video model text pdf html
+  royalties     Int           // percentage for the organization
   beneficiary   organizations @relation(fields: [beneficiaryId], references: [id])
   beneficiaryId String        @db.ObjectId
   forsale       Boolean
-  copies        Int // 0 for unlimited
+  copies        Int           // 0 for unlimited
   sold          Int
   price         Int
   tags          String
@@ -88,7 +88,7 @@ model artworks {
 model offers {
   id            String         @id @default(auto()) @map("_id") @db.ObjectId
   created       DateTime       @default(now()) @db.Date
-  type          Int // 0.sell 1.buy
+  type          Int            // 0.sell 1.buy
   seller        users          @relation("seller", fields: [sellerId], references: [id])
   sellerId      String         @db.ObjectId
   collection    collections    @relation(fields: [collectionId], references: [id])
@@ -102,7 +102,7 @@ model offers {
   buyerId       String?        @db.ObjectId
   beneficiary   organizations? @relation(fields: [beneficiaryId], references: [id])
   beneficiaryId String?        @db.ObjectId
-  wallet        String // organization wallet
+  wallet        String         // organization wallet
   offerId       String
-  status        Int // 0.created 1.accepted 2.declined
+  status        Int            // 0.created 1.accepted 2.declined
 }
