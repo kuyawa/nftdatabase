@@ -1,10 +1,8 @@
-import { PrismaClient } from "@prisma/client"
-// @ts-ignore
-import checkApiKey from "/lib/checkApiKey"
+import prisma from "prisma/client"
+import checkApiKey from "lib/checkApiKey"
 
 export default async function handler(req, res) {
   let { method, headers, query } = req
-  console.log('- ARTWORKS', method)
   switch (method) {
     // GET /api/artworks[?page=0&size=100]
     // gets latest minted nfts
@@ -20,9 +18,6 @@ export default async function handler(req, res) {
         if(page<0){ page = 0 }
         if(size<0){ size = 100 }
         let start = page * size
-        console.log('START', start, 'PAGE', page, 'SIZE', size)
-        let prisma = new PrismaClient()
-        await prisma.$connect()
         let data = await prisma.artworks.findMany({ 
           include:{
             author: true
@@ -31,8 +26,6 @@ export default async function handler(req, res) {
           take: size, 
           orderBy: {created: 'desc'} 
         })
-        await prisma.$disconnect()
-        //console.log(data?.length||0, 'rows')
         res.status(200).json({ success: true, data: data })
       } catch (error) {
         console.log({ error })
@@ -48,10 +41,7 @@ export default async function handler(req, res) {
           return res.status(403).json({ success: false, error: 'Not authorized' })
         }
         let data = req.body
-        let prisma = new PrismaClient()
-        await prisma.$connect()
         let result = await prisma.artworks.create({data: data})
-        await prisma.$disconnect()
         return res.status(201).json({ success: true, data: result })
       } catch (error) {
         console.error('REGISTRY ERROR', { error })

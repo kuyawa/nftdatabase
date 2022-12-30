@@ -1,6 +1,5 @@
-import { PrismaClient } from "@prisma/client"
-// @ts-ignore
-import checkApiKey from "/lib/checkApiKey"
+import prisma from "prisma/client"
+import checkApiKey from "lib/checkApiKey"
 
 export default async function handler(req, res) {
   const { method, query } = req
@@ -12,10 +11,7 @@ export default async function handler(req, res) {
         if (!authorized) {
           return res.status(403).json({ success: false })
         }
-        const prisma = new PrismaClient()
-        await prisma.$connect()
         const organizations = await prisma.organizations.findMany({orderBy: {name:'asc'}})
-        await prisma.$disconnect()
         res.status(200).json({ success: true, data: organizations })
       } catch (error) {
         console.log({ error })

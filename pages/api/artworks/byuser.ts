@@ -1,12 +1,10 @@
-import { PrismaClient } from "@prisma/client"
-// @ts-ignore
-import checkApiKey from "/lib/checkApiKey"
+import prisma from "prisma/client"
+import checkApiKey from "lib/checkApiKey"
 
-// GET /api/users/wallet/[address]
-// get user by wallet address
+// GET /api/artworks/user/[id]
+// get all nfts by user id
 export default async function handler(req, res) {
   let { method, headers, query } = req
-  console.log('- USER BY WALLET', query.address)
   switch (method) {
     case "GET":
       try {
@@ -14,11 +12,11 @@ export default async function handler(req, res) {
         if (!authorized) {
           return res.status(403).json({ success: false, error:'Not authorized' })
         }
-        let prisma = new PrismaClient()
-        await prisma.$connect()
-        let data = await prisma.users.findFirst({where: {wallet: query.address}})
-        await prisma.$disconnect()
-        //console.log('DATA:', data)
+        let data = await prisma.artworks.findMany({
+          where: {authorId: query.id},
+          include: { author: true, collection: true, beneficiary: true }
+          /*include: { author: true }*/
+        })
         res.status(200).json({ success: true, data: data })
       } catch (error) {
         console.log({ error })

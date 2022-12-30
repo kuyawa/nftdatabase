@@ -1,6 +1,5 @@
-import { PrismaClient } from "@prisma/client"
-// @ts-ignore
-import checkApiKey from "/lib/checkApiKey"
+import prisma from "prisma/client"
+import checkApiKey from "lib/checkApiKey"
 
 export default async function handler(req, res) {
   const { method, query } = req
@@ -12,10 +11,7 @@ export default async function handler(req, res) {
         if (!authorized) {
           return res.status(403).json({ success: false })
         }
-        const prisma = new PrismaClient()
-        await prisma.$connect()
         const organizations = await prisma.organizations.findMany()
-        await prisma.$disconnect()
         res.status(200).json({ success: true, data: organizations })
       } catch (error) {
         console.log({ error })
@@ -25,15 +21,11 @@ export default async function handler(req, res) {
     case "POST":
       try {
         const authorized = await checkApiKey(req.headers['x-api-key'])
-        console.log(req.headers['x-api-key'], { authorized })
         if (!authorized) {
           return res.status(403).json({ success: false })
         }
-        const data = req.body
-        const prisma = new PrismaClient()
-        await prisma.$connect()
-        const createdOrg = await prisma.organizations.create({data: data})
-        await prisma.$disconnect()
+        const record = req.body
+        const createdOrg = await prisma.organizations.create({record})
         res.status(201).json({ success: true, data: createdOrg })
       } catch (error) {
         console.log({ error })

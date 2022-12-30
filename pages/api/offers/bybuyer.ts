@@ -1,12 +1,10 @@
-import { PrismaClient } from "@prisma/client"
-// @ts-ignore
-import checkApiKey from "/lib/checkApiKey"
+import prisma from "prisma/client"
+import checkApiKey from "lib/checkApiKey"
 
-// GET /api/collections/user/[id]
-// get all collections by user id
+// GET /api/offers/user/[id]
+// get all offers by user id
 export default async function handler(req, res) {
   let { method, headers, query } = req
-  console.log('- COLLECTIONS BY USER', query.id)
   switch (method) {
     case "GET":
       try {
@@ -14,12 +12,17 @@ export default async function handler(req, res) {
         if (!authorized) {
           return res.status(403).json({ success: false, error:'Not authorized' })
         }
-        let prisma = new PrismaClient()
-        await prisma.$connect()
-        let data = await prisma.collections.findMany({where: {authorId: query.id}})
-        await prisma.$disconnect()
-        //console.log('DATA:', data)
-        //console.log('DATA:', data?.length)
+        let data = await prisma.offers.findMany({
+          where: {
+            buyerId: query.id,
+            status: 1
+          },
+          include: {
+            artwork: {
+              include: { beneficiary: true }
+            }
+          }
+        })
         res.status(200).json({ success: true, data: data })
       } catch (error) {
         console.log({ error })
